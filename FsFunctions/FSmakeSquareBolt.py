@@ -26,6 +26,14 @@
 """
 from screw_maker import *
 
+import sys as _sys_t, os as _os_t
+_wb_t = _os_t.path.dirname(_os_t.path.dirname(_os_t.path.abspath(__file__)))
+if _wb_t not in _sys_t.path:
+    _sys_t.path.insert(0, _wb_t)
+import FSThreadingASME   as _TA
+import FSThreadingMetric as _TM
+
+
 
 def makeSquareBolt(self, fa):
     """Creates a screw with a simple square head.
@@ -39,10 +47,11 @@ def makeSquareBolt(self, fa):
     length = fa.calc_len
 
     if fa.baseType == "ASMEB18.2.1.1":
-        TPI_tbl, F, H, R, L_T1, L_T2 = fa.dimTable
-        r     = R    * 25.4
-        s     = F    * 25.4
-        k     = H    * 25.4
+        # CSV columns: TPI, F_max, F_min, H_max, H_min, R, L_T1, L_T2 (all in inches)
+        TPI_tbl, F_max, F_min, H_max, H_min, R, L_T1, L_T2 = fa.dimTable
+        r     = R                          * 25.4
+        s     = ((F_max + F_min) / 2)     * 25.4
+        k     = ((H_max + H_min) / 2)     * 25.4
         P_tbl = 25.4 / TPI_tbl
         b_tbl = (L_T1 if length <= 6 * 25.4 else L_T2) * 25.4
     else:
@@ -103,11 +112,24 @@ def makeSquareBolt(self, fa):
     head_square = Part.makeBox(s, s, 2 * k + length)
     head_square.translate(Base.Vector(-s / 2, -s / 2, -length - k))
     shape = shape.common(head_square)
+    
+     # ── Thread cutter ─────────────────────────────────────────────────────
+    is_asme = fa.baseType.startswith("ASME")
+    d_eff   = thread_dia   # Dipak-formula diameter, consistent with body profile
 
     # ── Thread cutter ─────────────────────────────────────────────────────
     if fa.Thread:
-        thread_cutter = self.CreateBlindThreadCutter(thread_dia, P, thread_length)
-        thread_cutter.translate(Base.Vector(0.0, 0.0, -1 * (length - thread_length)))
-        shape = shape.cut(thread_cutter)
+
+        tl_cut   = thread_length
+
+        offset_z = -(length - thread_length)
+
+        if is_asme:
+
+            shape = _TA.cut_thread(shape, fa, d_eff, tl_cut, offset_z, P)
+
+        else:
+
+            shape = _TM.cut_thread(shape, fa, d_eff, tl_cut, offset_z, P)
 
     return shape

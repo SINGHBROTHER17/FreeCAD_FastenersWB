@@ -27,6 +27,14 @@
 """
 from screw_maker import *
 
+import sys as _sys_t, os as _os_t
+_wb_t = _os_t.path.dirname(_os_t.path.dirname(_os_t.path.abspath(__file__)))
+if _wb_t not in _sys_t.path:
+    _sys_t.path.insert(0, _wb_t)
+import FSThreadingASME   as _TA
+import FSThreadingMetric as _TM
+
+
 
 def makeRoundHeadScrew(self, fa):
     """Create a screw with a round head
@@ -69,19 +77,17 @@ def makeRoundHeadScrew(self, fa):
     raw_tlen = getattr(fa, "calc_thread_length", 0.0) or 0.0
     b = min(float(raw_tlen), length) if raw_tlen > 0.0 else b_tbl
 
-    # ── Thread diameter: ASME inch formula ────────────────────────────────
-    # thread_dia = dia - 0.15 / TPI
-    tpi = getattr(fa, "calc_tpi", None)
-    if not tpi or tpi <= 0:
-        tpi = round(25.4 / P_tbl)          # standard TPI from table
-    thread_dia = dia - (0.15 / tpi)
-    tr         = thread_dia / 2.0
+    # ── Effective thread diameter from proper threading module ────────────
+    is_asme = fa.baseType.startswith("ASME")
+    if is_asme:
+        d_eff = _TA.get_shank_dia(fa, dia)
+    else:
+        d_eff = _TM.get_shank_dia(fa, dia)
+    tr = d_eff / 2.0
 
     FreeCAD.Console.PrintMessage(
-        f"[Dipak] Threading: dia={dia:.4f}mm, "
-        f"thread_dia={thread_dia:.4f}mm, TPI={tpi}, "
-        f"allowance={dia - thread_dia:.4f}mm, "
-        f"thread_length={b:.2f}mm\n"
+        f"[RoundHead] dia={dia:.4f}mm  d_eff={d_eff:.4f}mm  "
+        f"P={P:.4f}mm  thread_length={b:.2f}mm\n"
     )
 
     # ── Thread length for cutter ──────────────────────────────────────────
@@ -108,8 +114,17 @@ def makeRoundHeadScrew(self, fa):
 
     # ── Thread cutter ─────────────────────────────────────────────────────
     if fa.Thread:
-        thread_cutter = self.CreateBlindThreadCutter(thread_dia, P, thread_length)
-        thread_cutter.translate(Base.Vector(0.0, 0.0, -1 * (length - thread_length)))
-        screw = screw.cut(thread_cutter)
+
+        tl_cut   = thread_length
+
+        offset_z = -(length - thread_length)
+
+        if is_asme:
+
+            screw = _TA.cut_thread(screw, fa, d_eff, tl_cut, offset_z, P)
+
+        else:
+
+            screw = _TM.cut_thread(screw, fa, d_eff, tl_cut, offset_z, P)
 
     return screw

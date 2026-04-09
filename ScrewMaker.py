@@ -261,6 +261,7 @@ screwTables = {
     "ISO4033": ("Nut", "makeHexNut"),
     "ISO4034": ("Nut", "makeHexNut"),
     "ISO4035": ("Nut", "makeHexNut"),
+    "ISO7414": ("Nut", "makeHexNut"), #HEAVY HEX NUT
     "ISO4161": ("Nut", "makeHexNutWFlange"),
     "ISO7040": ("Nut", "makeNylocNut"),
     "ISO7041": ("Nut", "makeNylocNut"),
@@ -301,16 +302,26 @@ screwTables = {
     "GN506": ("TSlot", "makeTSlot"),
     "GN507": ("TSlot", "makeTSlot"),
     "ASMEB18.2.1.1": ("Screw", "makeSquareBolt"),
-    "ASMEB18.2.1.6": ("Screw", "makeHexHeadBolt"),
+    "ASMEB18.2.1.2": ("Screw", "makeHexHeadBolt"),   # Hex Bolts (Table 2)
+    "ASMEB18.2.1.3": ("Screw", "makeHexHeadBolt"),   # Heavy Hex Bolts (Table 3)
+    "ASMEB18.2.1.6": ("Screw", "makeHexHeadBolt"),   # Hex Screws (Table 6)
+    "ASMEB18.2.1.7": ("Screw", "makeHexHeadBolt"),   # Heavy Hex Screws (Table 7)
+
     "ASMEB18.2.1.8": ("Screw", "makeHexHeadWithFlange"),
+    "ASMEB18.2.1.9": ("Screw", "makeLobeHeadScrew"),
     "ASMEB18.2.2.1A": ("Nut", "makeHexNut"),
     "ASMEB18.2.2.1B": ("Nut", "makeSquareNut"),
     "ASMEB18.2.2.2": ("Nut", "makeSquareNut"),
-    "ASMEB18.2.2.4A": ("Nut", "makeHexNut"),
-    "ASMEB18.2.2.4B": ("Nut", "makeHexNut"),
-    "ASMEB18.2.2.5": ("Nut", "makeCastleNut"),
-    "ASMEB18.2.2.12": ("Nut", "makeHexNutWFlange"),
-    "ASMEB18.2.2.13": ("Nut", "makeHexNut"),
+    "ASMEB18.2.2.3": ("Nut", "makeHexNut"),       # Hexagon nuts (Table 3)
+    "ASMEB18.2.2.5A": ("Nut", "makeHexNut"),      # Hex Nuts (Table 5A)
+    "ASMEB18.2.2.5B": ("Nut", "makeHexNut"),      # Hex Jam Nuts (Table 5B)
+    "ASMEB18.2.2.11A": ("Nut", "makeHexNut"),     # Heavy Hex Nut (Table 11)
+    "ASMEB18.2.2.11B": ("Nut", "makeHexNut"),     # Heavy Hex Jam Nut (Table 11)
+    "ASMEB18.2.2.6": ("Nut", "makeCastleNut"),    # Hex Slotted Thin Nuts (Table 6)
+    "ASMEB18.2.2.8": ("Nut", "makeCastleNut"),    # Hex Slotted Wide Nuts (Table 8)
+    "ASMEB18.2.2.13A": ("Nut", "makeHexNutWFlange"),  # Hex Flange Nuts (Table 13A)
+    "ASMEB18.2.2.13B": ("Nut", "makeHexNutWFlange"),  # Large Hex Flange Nuts (Table 13B)
+    "ASMEB18.2.2.14": ("Nut", "makeHexNut"),      # Hex Coupling Nuts (Table 14)
     "ASMEB18.6.9A": ("Nut", "makeWingNut"),
     "SAEJ483a1": ("Nut", "makeCupNut"),
     "SAEJ483a2": ("Nut", "makeCupNut"),
